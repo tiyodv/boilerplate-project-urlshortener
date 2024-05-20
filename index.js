@@ -47,7 +47,8 @@ app.post(
     await newUrl.save()
     res.json({"original_url": req.body.url, "short_url": bodyUrl.urlMap.code});
   } else {
-    res.json({error: 'invalid url'})
+    res.json({ error: 'Invalid URL' })
+    return
   }
 });
 

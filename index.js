@@ -6,6 +6,7 @@ require("./db");
 const Url = require("./urlshcema")
 const URLShortener = require("./URLShorterner");
 const { find } = require("./urlshcema");
+const isValidUrl = require("./isValidUrl")
 
 
 // Basic Configuration
@@ -33,8 +34,11 @@ app.listen(port, function () {
 
 // API :input endpoint...
     let bodyUrl = new URLShortener.URLShortener()
+    let validUrl
 app.post(
   "/api/shorturl", async(req, res)=>{
+    validUrl = isValidUrl(req.body.url)
+    if(validUrl){
     bodyUrl.shorten(req.body.url)
     const newUrl = new Url({
       original_url: req.body.url,
@@ -42,6 +46,9 @@ app.post(
     })
     await newUrl.save()
     res.json({"original_url": req.body.url, "short_url": bodyUrl.urlMap.code});
+  } else {
+    res.json({error: 'invalid url'})
+  }
 });
 
 app.get('/api/shorturl/:input', async(req, res)=>{
